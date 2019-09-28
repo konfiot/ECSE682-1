@@ -65,7 +65,7 @@ public class LogView extends AppCompatActivity {
 
     @Override
     public void onStop(){
-        super.onResume();
+        super.onStop();
         TextView text = findViewById(R.id.events);
 
         text.setText("Stopped");
@@ -75,7 +75,7 @@ public class LogView extends AppCompatActivity {
 
     @Override
     public void onRestart(){
-        super.onResume();
+        super.onRestart();
         TextView text = findViewById(R.id.events);
 
         text.setText("Restarted");
@@ -85,7 +85,7 @@ public class LogView extends AppCompatActivity {
 
     @Override
     public void onStart(){
-        super.onResume();
+        super.onStart();
         TextView text = findViewById(R.id.events);
 
         text.setText("Started");
@@ -152,5 +152,4 @@ public class LogView extends AppCompatActivity {
         catch(IOException ex) {}
         return true;
     }
-
 }
