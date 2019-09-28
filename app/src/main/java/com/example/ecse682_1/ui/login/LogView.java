@@ -1,36 +1,24 @@
 package com.example.ecse682_1.ui.login;
 
+import android.content.Intent;
 import android.os.Bundle;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
+import android.view.View;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import android.view.View;
-
 import com.example.ecse682_1.R;
-
-import android.widget.TextView;
-
-import java.io.FileWriter;
-import java.io.IOException;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
-
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
 
@@ -43,14 +31,6 @@ public class LogView extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
         appendToFile("Created");
     }
 
@@ -158,5 +138,11 @@ public class LogView extends AppCompatActivity {
         }
         writeLogFile(json);
         return true;
+    }
+
+    public void logout(View view) {
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
+        finish();
     }
 }

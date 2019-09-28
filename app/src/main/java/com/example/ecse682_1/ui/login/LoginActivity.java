@@ -23,17 +23,11 @@ import androidx.lifecycle.ViewModelProviders;
 import com.example.ecse682_1.R;
 import com.example.ecse682_1.data.LoginDataSource;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 public class LoginActivity extends AppCompatActivity {
 
     private LoginViewModel loginViewModel;
 
     private TextView displayResult ;
-
-    private Button logoutButton;
-
-    private AtomicBoolean userLogged = new AtomicBoolean(false);
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -47,8 +41,7 @@ public class LoginActivity extends AppCompatActivity {
         final Button loginButton = findViewById(R.id.login);
         final ProgressBar loadingProgressBar = findViewById(R.id.loading);
         final Button registerButton = findViewById(R.id.buttonRegister);
-        displayResult = (TextView) findViewById(R.id.result);
-        logoutButton  = (Button) findViewById(R.id.logoutButton);
+        displayResult = findViewById(R.id.result);
 
         loginViewModel.getLoginFormState().observe(this, new Observer<LoginFormState>() {
             @Override
@@ -76,14 +69,12 @@ public class LoginActivity extends AppCompatActivity {
                 loadingProgressBar.setVisibility(View.GONE);
                 if (loginResult.getError() != null) {
                     showLoginFailed(loginResult.getError());
-                    state = "Error occurred";
+                    state = "Failed to connect";
                 } else if (loginResult.getSuccess() != null) {
                     updateUiWithUser(loginResult.getSuccess());
-                    userLogged.set(true);
-                    logoutButton.setVisibility(View.VISIBLE);
-                    state = "LoggedIn";
                     setResult(Activity.RESULT_OK);
                     jumpToLog(null);
+                    return;
                 } else {
                     state = "An error occurred";
                 }
@@ -142,16 +133,6 @@ public class LoginActivity extends AppCompatActivity {
                         passwordEditText.getText().toString());
             }
         });
-
-        logoutButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                loginViewModel.logout();
-                userLogged.set(false);
-                logoutButton.setVisibility(View.GONE);
-                displayResult.setText(R.string.logout_message);
-            }
-        });
     }
 
     private void updateUiWithUser(LoggedInUserView model) {
@@ -167,6 +148,7 @@ public class LoginActivity extends AppCompatActivity {
     public void jumpToLog(View view) {
         Intent intent = new Intent(this, LogView.class);
         startActivity(intent);
+        finish();
     }
 
     @Override
