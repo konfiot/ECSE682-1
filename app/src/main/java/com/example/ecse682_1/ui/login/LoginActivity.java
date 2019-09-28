@@ -1,6 +1,7 @@
 package com.example.ecse682_1.ui.login;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -82,6 +83,7 @@ public class LoginActivity extends AppCompatActivity {
                     logoutButton.setVisibility(View.VISIBLE);
                     state = "LoggedIn";
                     setResult(Activity.RESULT_OK);
+                    jumpToLog();
                 } else {
                     state = "An error occurred";
                 }
@@ -160,6 +162,11 @@ public class LoginActivity extends AppCompatActivity {
 
     private void showLoginFailed(@StringRes Integer errorString) {
         Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_SHORT).show();
+    }
+
+    public void jumpToLog(View view) {
+        Intent intent = new Intent(this, LogView.class);
+        startActivity(intent);
     }
 
     @Override
