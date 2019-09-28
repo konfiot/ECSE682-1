@@ -17,6 +17,7 @@ import android.widget.TextView;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -50,15 +51,17 @@ public class LogView extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+        appendToFile("Created");
     }
 
 
     @Override
     public void onResume(){
         super.onResume();
+        appendToFile("Resumed");
         TextView text = findViewById(R.id.events);
 
-        text.setText("Resumed");
+        text.setText(readLogFile().toString());
 
     }
 
@@ -66,9 +69,7 @@ public class LogView extends AppCompatActivity {
     @Override
     public void onStop(){
         super.onStop();
-        TextView text = findViewById(R.id.events);
-
-        text.setText("Stopped");
+        appendToFile("Stopped");
 
     }
 
@@ -76,9 +77,7 @@ public class LogView extends AppCompatActivity {
     @Override
     public void onRestart(){
         super.onRestart();
-        TextView text = findViewById(R.id.events);
-
-        text.setText("Restarted");
+        appendToFile("Restarted");
 
     }
 
@@ -86,9 +85,7 @@ public class LogView extends AppCompatActivity {
     @Override
     public void onStart(){
         super.onStart();
-        TextView text = findViewById(R.id.events);
-
-        text.setText("Started");
+        appendToFile("Started");
 
     }
 
@@ -96,21 +93,20 @@ public class LogView extends AppCompatActivity {
     @Override
     public void onDestroy(){
         super.onDestroy();
+        appendToFile("Destroyed");
     }
 
     @Override
     public void onPause(){
         super.onPause();
-        TextView text = findViewById(R.id.events);
-
-        text.setText("Paused");
+        appendToFile("Paused");
 
     }
 
     public JSONObject readLogFile() {
         String contents = "";
         try{
-            File file = new File(getCacheDir(), "logs.json");
+            File file = new File("logs.json");
             FileInputStream fis = new FileInputStream(file);
 
         byte[] data = new byte[(int) file.length()];
@@ -129,13 +125,13 @@ public class LogView extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        return null;
+        return new JSONObject();
     }
 
     public boolean writeLogFile(JSONObject json) {
         try{
 
-            File file = new File(getCacheDir(), "logs.json");
+            File file = new File("logs.json");
             FileOutputStream fileOutputStream = new FileOutputStream(file);
 
             String contents = json.toString();
@@ -150,6 +146,17 @@ public class LogView extends AppCompatActivity {
 
         } catch(FileNotFoundException ex) {}
         catch(IOException ex) {}
+        return true;
+    }
+
+    public boolean appendToFile(String event) {
+        JSONObject json = readLogFile();
+        try {
+            json.getJSONArray("events").put(event);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        writeLogFile(json);
         return true;
     }
 }
