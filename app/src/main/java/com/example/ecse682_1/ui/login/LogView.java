@@ -106,7 +106,7 @@ public class LogView extends AppCompatActivity {
     public JSONObject readLogFile() {
         String contents = "";
         try{
-            File file = new File("logs.json");
+            File file = new File("storage.json");
             FileInputStream fis = new FileInputStream(file);
 
         byte[] data = new byte[(int) file.length()];
@@ -131,7 +131,7 @@ public class LogView extends AppCompatActivity {
     public boolean writeLogFile(JSONObject json) {
         try{
 
-            File file = new File("logs.json");
+            File file = new File("storage.json");
             FileOutputStream fileOutputStream = new FileOutputStream(file);
 
             String contents = json.toString();
