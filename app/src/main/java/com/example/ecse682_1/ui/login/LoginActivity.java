@@ -1,16 +1,7 @@
 package com.example.ecse682_1.ui.login;
 
 import android.app.Activity;
-
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
-
 import android.os.Bundle;
-
-import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -22,13 +13,26 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+
 import com.example.ecse682_1.R;
-import com.example.ecse682_1.ui.login.LoginViewModel;
-import com.example.ecse682_1.ui.login.LoginViewModelFactory;
+import com.example.ecse682_1.data.LoginDataSource;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class LoginActivity extends AppCompatActivity {
 
     private LoginViewModel loginViewModel;
+
+    private TextView displayResult ;
+
+    private Button logoutButton;
+
+    private AtomicBoolean userLogged = new AtomicBoolean(false);
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -41,6 +45,9 @@ public class LoginActivity extends AppCompatActivity {
         final EditText passwordEditText = findViewById(R.id.password);
         final Button loginButton = findViewById(R.id.login);
         final ProgressBar loadingProgressBar = findViewById(R.id.loading);
+        final Button registerButton = findViewById(R.id.buttonRegister);
+        displayResult = (TextView) findViewById(R.id.result);
+        logoutButton  = (Button) findViewById(R.id.logoutButton);
 
         loginViewModel.getLoginFormState().observe(this, new Observer<LoginFormState>() {
             @Override
@@ -64,17 +71,24 @@ public class LoginActivity extends AppCompatActivity {
                 if (loginResult == null) {
                     return;
                 }
+                String state;
                 loadingProgressBar.setVisibility(View.GONE);
                 if (loginResult.getError() != null) {
                     showLoginFailed(loginResult.getError());
-                }
-                if (loginResult.getSuccess() != null) {
+                    state = "Error occurred";
+                } else if (loginResult.getSuccess() != null) {
                     updateUiWithUser(loginResult.getSuccess());
+                    userLogged.set(true);
+                    logoutButton.setVisibility(View.VISIBLE);
+                    state = "LoggedIn";
+                    setResult(Activity.RESULT_OK);
+                } else {
+                    state = "An error occurred";
                 }
-                setResult(Activity.RESULT_OK);
 
                 //Complete and destroy login activity once successful
-                finish();
+                //finish();
+                displayResult.setText(state);
             }
         });
 
@@ -117,6 +131,25 @@ public class LoginActivity extends AppCompatActivity {
                         passwordEditText.getText().toString());
             }
         });
+
+        registerButton.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadingProgressBar.setVisibility(View.VISIBLE);
+                loginViewModel.register(usernameEditText.getText().toString(),
+                        passwordEditText.getText().toString());
+            }
+        });
+
+        logoutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                loginViewModel.logout();
+                userLogged.set(false);
+                logoutButton.setVisibility(View.GONE);
+                displayResult.setText(R.string.logout_message);
+            }
+        });
     }
 
     private void updateUiWithUser(LoggedInUserView model) {
@@ -127,5 +160,11 @@ public class LoginActivity extends AppCompatActivity {
 
     private void showLoginFailed(@StringRes Integer errorString) {
         Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        LoginDataSource.safeState();
     }
 }

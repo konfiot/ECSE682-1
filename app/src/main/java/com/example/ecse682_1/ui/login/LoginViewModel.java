@@ -1,15 +1,15 @@
 package com.example.ecse682_1.ui.login;
 
+import android.util.Patterns;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import android.util.Patterns;
-
+import com.example.ecse682_1.R;
 import com.example.ecse682_1.data.LoginRepository;
 import com.example.ecse682_1.data.Result;
 import com.example.ecse682_1.data.model.LoggedInUser;
-import com.example.ecse682_1.R;
 
 public class LoginViewModel extends ViewModel {
 
@@ -37,7 +37,13 @@ public class LoginViewModel extends ViewModel {
             LoggedInUser data = ((Result.Success<LoggedInUser>) result).getData();
             loginResult.setValue(new LoginResult(new LoggedInUserView(data.getDisplayName())));
         } else {
-            loginResult.setValue(new LoginResult(R.string.login_failed));
+            if(result.toString().contains("Username")) {
+                loginResult.setValue(new LoginResult(R.string.login_failed_wronguser));
+            } else if(result.toString().contains("Invalid")) {
+                loginResult.setValue(new LoginResult(R.string.login_failed_wrongpassword));
+            } else {
+                loginResult.setValue(new LoginResult(R.string.login_failed));
+            }
         }
     }
 
@@ -49,6 +55,24 @@ public class LoginViewModel extends ViewModel {
         } else {
             loginFormState.setValue(new LoginFormState(true));
         }
+    }
+
+    public void register(String username, String password) {
+        if (!isUserNameValid(username)) {
+            loginFormState.setValue(new LoginFormState(R.string.invalid_username, null));
+        } else if (!isPasswordValid(password)) {
+            loginFormState.setValue(new LoginFormState(null, R.string.invalid_password));
+        } else {
+            if(loginRepository.register(username, password) instanceof Result.Success) {
+                loginResult.setValue(new LoginResult(R.string.registration_success));
+            } else {
+                loginResult.setValue(new LoginResult(R.string.registration_failed));
+            }
+        }
+    }
+
+    public void logout() {
+        loginRepository.logout();
     }
 
     // A placeholder username validation check

@@ -3,10 +3,19 @@
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
-    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in">Sign in</string>
     <string name="action_sign_in_short">Sign in</string>
     <string name="welcome">"Welcome !"</string>
     <string name="invalid_username">Not a valid username</string>
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
+    <string name="registration_failed">"Registration failed"</string>
+    <string name="registration_success">"Registration succeeded"</string>
+    <string name="action_register">Register</string>
+    <string name="storage_file">storage.json</string>
+    <string name="logout">LOGOUT</string>
+    <string name="login_result">Not logged in yet</string>
+    <string name="login_failed_wronguser">"Incorrect user passed"</string>
+    <string name="login_failed_wrongpassword">"Invalid password"</string>
+    <string name="logout_message">"Logged out"</string>
 </resources>
