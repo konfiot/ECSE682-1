@@ -14,6 +14,24 @@ import com.example.ecse682_1.R;
 
 import android.widget.TextView;
 
+import java.io.FileWriter;
+import java.io.IOException;
+
+import org.json.JSONObject;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+
 
 public class LogView extends AppCompatActivity {
 
@@ -88,4 +106,51 @@ public class LogView extends AppCompatActivity {
         text.setText("Paused");
 
     }
+
+    public JSONObject readLogFile() {
+        String contents = "";
+        try{
+            File file = new File(getCacheDir(), "logs.json");
+            FileInputStream fis = new FileInputStream(file);
+
+        byte[] data = new byte[(int) file.length()];
+            fis.read(data);
+            fis.close();
+            contents = new String(data, "UTF-8");;
+
+        } catch(FileNotFoundException ex) {}
+        catch(IOException ex) {}
+
+
+        try {
+            JSONObject json = new JSONObject(contents);
+            return json;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public boolean writeLogFile(JSONObject json) {
+        try{
+
+            File file = new File(getCacheDir(), "logs.json");
+            FileOutputStream fileOutputStream = new FileOutputStream(file);
+
+            String contents = json.toString();
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream);
+            BufferedWriter bufferedWriter = new BufferedWriter(outputStreamWriter);
+
+            bufferedWriter.write(contents);
+
+            bufferedWriter.flush();
+            bufferedWriter.close();
+            outputStreamWriter.close();
+
+        } catch(FileNotFoundException ex) {}
+        catch(IOException ex) {}
+        return true;
+    }
+
 }
