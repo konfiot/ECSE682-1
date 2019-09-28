@@ -83,7 +83,7 @@ public class LoginActivity extends AppCompatActivity {
                     logoutButton.setVisibility(View.VISIBLE);
                     state = "LoggedIn";
                     setResult(Activity.RESULT_OK);
-                    jumpToLog();
+                    jumpToLog(null);
                 } else {
                     state = "An error occurred";
                 }

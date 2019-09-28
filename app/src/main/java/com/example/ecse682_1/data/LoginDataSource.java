@@ -112,7 +112,6 @@ public class LoginDataSource {
     }
 
     public static void safeState() {
-        if(fileEnabled) {
             try {
 
                 System.out.println("Saving state");
@@ -133,7 +132,6 @@ public class LoginDataSource {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
 
     }
 }
