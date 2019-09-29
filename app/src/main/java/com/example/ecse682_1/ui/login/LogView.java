@@ -1,6 +1,5 @@
 package com.example.ecse682_1.ui.login;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
@@ -9,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.example.ecse682_1.R;
+import com.example.ecse682_1.data.LoginRepository;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,7 +30,6 @@ public class LogView extends AppCompatActivity {
         setContentView(R.layout.activity_log_view);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         appendToFile("Created");
     }
 
@@ -141,8 +140,7 @@ public class LogView extends AppCompatActivity {
     }
 
     public void logout(View view) {
-        Intent intent = new Intent(this, LoginActivity.class);
-        startActivity(intent);
+        LoginRepository.logout();
         finish();
     }
 }

@@ -1,6 +1,7 @@
 package com.example.ecse682_1.data;
 
 import com.example.ecse682_1.data.model.LoggedInUser;
+import com.example.ecse682_1.ui.login.LogoutCallback;
 
 /**
  * Class that requests authentication and user information from the remote data source and
@@ -11,6 +12,8 @@ public class LoginRepository {
     private static volatile LoginRepository instance;
 
     private LoginDataSource dataSource;
+
+    private LogoutCallback callback;
 
 //    private KeyPairGenerator kpg;
 //
@@ -38,9 +41,10 @@ public class LoginRepository {
 //        }
     }
 
-    public static LoginRepository getInstance(LoginDataSource dataSource) {
+    public static LoginRepository getInstance(LoginDataSource dataSource, LogoutCallback callback) {
         if (instance == null) {
             instance = new LoginRepository(dataSource);
+            instance.callback = callback;
         }
         return instance;
     }
@@ -58,9 +62,10 @@ public class LoginRepository {
         }
     }
 
-    public void logout() {
-        user = null;
-        dataSource.logout();
+    public static void logout() {
+        instance.user = null;
+        instance.dataSource.logout();
+        instance.callback.logoutCallback();
     }
 
     private void setLoggedInUser(LoggedInUser user) {

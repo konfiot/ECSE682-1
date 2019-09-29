@@ -33,15 +33,24 @@ public class LoginActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        loginViewModel = ViewModelProviders.of(this, new LoginViewModelFactory())
-                .get(LoginViewModel.class);
 
         final EditText usernameEditText = findViewById(R.id.username);
         final EditText passwordEditText = findViewById(R.id.password);
         final Button loginButton = findViewById(R.id.login);
         final ProgressBar loadingProgressBar = findViewById(R.id.loading);
-        final Button registerButton = findViewById(R.id.buttonRegister);
         displayResult = findViewById(R.id.result);
+
+        LoginViewModelFactory factory = new LoginViewModelFactory( new LogoutCallback() {
+            @Override
+            public void logoutCallback() {
+                displayResult.setText(R.string.logout_message);
+            }
+        });
+        loginViewModel = ViewModelProviders.of(this, factory)
+                .get(LoginViewModel.class);
+
+//        final Button registerButton = findViewById(R.id.buttonRegister);
+
 
         loginViewModel.getLoginFormState().observe(this, new Observer<LoginFormState>() {
             @Override
@@ -125,14 +134,14 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        registerButton.setOnClickListener( new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loadingProgressBar.setVisibility(View.VISIBLE);
-                loginViewModel.register(usernameEditText.getText().toString(),
-                        passwordEditText.getText().toString());
-            }
-        });
+//        registerButton.setOnClickListener( new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                loadingProgressBar.setVisibility(View.VISIBLE);
+//                loginViewModel.register(usernameEditText.getText().toString(),
+//                        passwordEditText.getText().toString());
+//            }
+//        });
     }
 
     private void updateUiWithUser(LoggedInUserView model) {
@@ -148,7 +157,6 @@ public class LoginActivity extends AppCompatActivity {
     public void jumpToLog(View view) {
         Intent intent = new Intent(this, LogView.class);
         startActivity(intent);
-        finish();
     }
 
     @Override
