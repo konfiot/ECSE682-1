@@ -1,20 +1,18 @@
 package com.example.ecse682_1.ui.login;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-
-import android.util.Log;
-import android.view.View;
 
 import com.example.ecse682_1.R;
 import com.example.ecse682_1.data.LoginRepository;
 
 import org.json.JSONException;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedWriter;
@@ -28,6 +26,8 @@ import java.io.OutputStreamWriter;
 
 public class LogView extends AppCompatActivity {
 
+    private static JSONObject status;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,6 +35,15 @@ public class LogView extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         appendToFile("Created");
+    }
+
+    private void updateField(JSONObject status, String state) {
+        try {
+            JSONObject events = status.getJSONObject("events");
+            events.has(state);
+        } catch(JSONException ex) {
+            ex.printStackTrace();
+        }
     }
 
 
@@ -105,8 +114,12 @@ public class LogView extends AppCompatActivity {
             fis.close();
             contents = new String(data, "UTF-8");;
 
-        } catch(FileNotFoundException ex) {}
-        catch(IOException ex) {}
+        } catch(FileNotFoundException ex) {
+            Toast.makeText(this, ex.toString(), Toast.LENGTH_SHORT);
+        }
+        catch(IOException ex) {
+            Toast.makeText(this, ex.toString(), Toast.LENGTH_SHORT);
+        }
 
         Log.d("Contents", contents);
 
@@ -141,20 +154,27 @@ public class LogView extends AppCompatActivity {
             bufferedWriter.close();
             outputStreamWriter.close();
 
-        } catch(FileNotFoundException ex) {}
-        catch(IOException ex) {}
+        } catch(FileNotFoundException ex) {
+            Toast.makeText(this, ex.toString(), Toast.LENGTH_SHORT);
+        }
+        catch(IOException ex) {
+            Toast.makeText(this, ex.toString(), Toast.LENGTH_SHORT);
+        }
         return true;
     }
 
     public boolean appendToFile(String event) {
         JSONObject json = readLogFile();
-        try {
-            JSONArray array = json.getJSONArray("events");
-            array.put(event);
-            json.put("events", array);
+        try{
+            JSONObject events = json.getJSONObject("events");
+            int value = 1;
+            if(events.has(event)) {
+                value += events.getInt(event);
+            }
+            events.put(event, value);
         } catch (JSONException e) {
             try {
-                json.put("events", new JSONArray().put(event));
+                json.put( "events", new JSONObject().put(event, 1));
             } catch (JSONException ex) {
                 ex.printStackTrace();
             }
